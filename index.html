@@ -1,1 +1,151 @@
-<h1>어몽트리 아트</h1>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>among.trees.art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&family=Noto+Serif+KR:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ece6d8;
+  --ink:#2a2823;
+  --muted:#7a7467;
+  --line:#cfc7b4;
+  --serif:'Spectral','Noto Serif KR',Georgia,serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background-color:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-weight:300;font-size:17px;line-height:1.8;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .3  0 0 0 0 .22  0 0 0 .22 0'/></filter><rect width='300' height='300' filter='url(%23n)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.012 .02' numOctaves='2' seed='4'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .42  0 0 0 0 .3  0 0 0 .13 0'/></filter><rect width='600' height='600' filter='url(%23f)'/></svg>");
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:44px 28px 80px}
+header{display:flex;flex-direction:column;gap:22px;margin-bottom:56px}
+.site{font-size:26px;font-weight:300;letter-spacing:.02em}
+nav{display:flex;flex-wrap:wrap;gap:6px 26px;font-size:15px}
+nav a{color:var(--muted);padding:4px 0;border-bottom:1px solid transparent;transition:color .2s,border-color .2s}
+nav a:hover{color:var(--ink)}
+nav a[aria-current="page"]{color:var(--ink);border-color:var(--ink)}
+h1{font-weight:300;font-size:30px;line-height:1.3;margin:0 0 10px}
+.intro{color:var(--muted);max-width:520px;margin:0 0 44px;font-size:15.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:40px 30px}
+.item{cursor:pointer}
+.thumb{aspect-ratio:4/5;width:100%;background:var(--sw,#d8d0bd);overflow:hidden;box-shadow:0 1px 0 rgba(60,50,30,.12), 0 8px 18px -12px rgba(60,50,30,.35)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.item h2{font-size:17px;font-weight:400;margin:14px 0 2px}
+.item p{margin:0;font-size:14.5px;color:var(--muted);line-height:1.6}
+.about{max-width:560px}
+.about p{margin:0 0 1.2em}
+.about .contact{margin-top:2em;padding-top:1.2em;border-top:1px solid var(--line);font-size:15px;color:var(--muted)}
+.about a{border-bottom:1px solid var(--line)}
+#lb{position:fixed;inset:0;background:rgba(236,230,216,.96);display:none;align-items:center;justify-content:center;padding:28px;z-index:9;cursor:pointer}
+#lb.on{display:flex}
+#lb figure{margin:0;max-width:760px;width:100%;text-align:left}
+#lb .big{width:100%;max-height:68vh;aspect-ratio:4/5;background:var(--sw,#d8d0bd);margin:0 auto;display:block;object-fit:contain}
+#lb .big.sw{max-width:420px}
+#lb h2{font-size:20px;font-weight:400;margin:16px 0 4px}
+#lb p{margin:0;color:var(--muted);font-size:15px;max-width:560px}
+footer{margin-top:90px;font-size:13px;color:var(--muted)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+@media(max-width:560px){.wrap{padding:32px 20px 60px}.grid{grid-template-columns:repeat(2,1fr);gap:28px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="site" href="#about">among.trees.art</a>
+    <nav id="nav"></nav>
+  </header>
+  <main id="main"></main>
+  <footer>© among.trees.art</footer>
+</div>
+<div id="lb" role="dialog" aria-label="확대 보기"></div>
+
+<script>
+/* ============================================================
+   여기만 고치면 돼요.
+   1) 메뉴 이름·설명은 SECTIONS에서
+   2) 작업 항목은 ITEMS에 한 줄씩 추가해요
+      cat  : 어느 카테고리인지 (아래 id 중 하나)
+      title: 제목
+      note : 짧은 글
+      img  : 사진 파일 이름 (index.html과 같은 곳에 올린 파일). 없으면 ""
+      color: 사진이 없을 때 보이는 색 (예: "#7a8b5c")
+   ============================================================ */
+const SECTIONS = [
+  {id:"about",   name:"About",             intro:""},
+  {id:"studies", name:"Studies in Color",  intro:"색을 관찰하고 실험한 기록."},
+  {id:"self",    name:"Self-Made Colors",  intro:"직접 만든 물감과 색."},
+  {id:"archive", name:"Pigment Archive",   intro:"안료 재료의 기록."},
+  {id:"use",     name:"Pigment in Use",    intro:"안료를 작업에 쓴 결과."}
+];
+
+const ABOUT = {
+  text:[
+    "어몽트리 아트는 물감과 종이를 직접 만들며 색을 연구하는 작업입니다.",
+    "재료를 모으고, 안료로 만들고, 그림에 쓰는 과정을 이곳에 차곡차곡 기록합니다."
+  ],
+  contactHtml:'Instagram <a href="https://instagram.com/among.trees.art" target="_blank" rel="noopener">@among.trees.art</a><br>Email 이메일 주소를 여기에 적어주세요'
+};
+
+const ITEMS = [
+  {cat:"studies", title:"샘플 · 초록의 단계", note:"샘플 항목이에요. 지우고 내 작업으로 바꿔주세요.", img:"", color:"#8a9a6e"},
+  {cat:"studies", title:"샘플 · 빛 아래 변하는 색", note:"사진 파일을 올리고 img에 파일 이름을 적으면 사진이 나와요.", img:"", color:"#b9a27a"},
+  {cat:"self",    title:"샘플 · 밤나무 껍질 물감", note:"재료, 바인더, 만든 날짜를 짧게 적어보세요.", img:"", color:"#6b4f3a"},
+  {cat:"self",    title:"샘플 · 쑥 물감", note:"", img:"", color:"#7d8b5a"},
+  {cat:"archive", title:"샘플 · 황토", note:"채집한 곳과 날짜.", img:"", color:"#b9823f"},
+  {cat:"archive", title:"샘플 · 감잎", note:"", img:"", color:"#9c8f52"},
+  {cat:"use",     title:"샘플 · 숲 드로잉", note:"만든 물감으로 그린 작업.", img:"", color:"#a5ad92"}
+];
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function render(){
+  const id = (location.hash || "#about").slice(1);
+  const sec = SECTIONS.find(s => s.id === id) || SECTIONS[0];
+  $("#nav").innerHTML = SECTIONS.map(s =>
+    `<a href="#${s.id}"${s.id===sec.id?' aria-current="page"':''}>${esc(s.name)}</a>`).join("");
+  document.title = (sec.id==="about" ? "" : sec.name + " – ") + "among.trees.art";
+
+  if(sec.id === "about"){
+    $("#main").innerHTML = `<div class="about"><h1>About</h1>` +
+      ABOUT.text.map(t => `<p>${esc(t)}</p>`).join("") +
+      `<p class="contact">${ABOUT.contactHtml}</p></div>`;
+    return;
+  }
+  const list = ITEMS.filter(i => i.cat === sec.id);
+  $("#main").innerHTML = `<h1>${esc(sec.name)}</h1><p class="intro">${esc(sec.intro)}</p>` +
+    `<div class="grid">` + list.map((it, n) =>
+      `<article class="item" tabindex="0" data-n="${n}">
+        <div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${esc(it.img)}" alt="${esc(it.title)}" loading="lazy">`:''}</div>
+        <h2>${esc(it.title)}</h2>${it.note?`<p>${esc(it.note)}</p>`:''}
+      </article>`).join("") + `</div>`;
+
+  document.querySelectorAll(".item").forEach(el => {
+    const open = () => openLb(list[el.dataset.n]);
+    el.addEventListener("click", open);
+    el.addEventListener("keydown", e => { if(e.key==="Enter") open(); });
+  });
+  window.scrollTo(0,0);
+}
+
+function openLb(it){
+  const media = it.img
+    ? `<img class="big" src="${esc(it.img)}" alt="${esc(it.title)}">`
+    : `<div class="big sw" style="--sw:${esc(it.color||'#d8d0bd')}"></div>`;
+  $("#lb").innerHTML = `<figure>${media}<h2>${esc(it.title)}</h2>${it.note?`<p>${esc(it.note)}</p>`:''}</figure>`;
+  $("#lb").classList.add("on");
+}
+$("#lb").addEventListener("click", () => $("#lb").classList.remove("on"));
+document.addEventListener("keydown", e => { if(e.key==="Escape") $("#lb").classList.remove("on"); });
+window.addEventListener("hashchange", render);
+render();
+</script>
+</body>
+</html>
