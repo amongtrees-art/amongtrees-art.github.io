@@ -57,6 +57,8 @@ h1{font-weight:300;font-size:30px;line-height:1.3;margin:0 0 10px}
 #pop .thumb{aspect-ratio:3/4;box-shadow:none}
 #pop h3{font-size:15px;font-weight:400;margin:10px 0 2px}
 #pop p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.6}
+#pop p,#lb p{white-space:pre-line}
+.meta{margin:2px 0 8px;font-size:12.5px;line-height:1.6;color:var(--ink)}
 @media(max-width:700px){.hero{grid-template-columns:1fr;gap:24px}}
 #lb{position:fixed;inset:0;background:rgba(236,230,216,.96);display:none;align-items:center;justify-content:center;padding:28px;z-index:9;cursor:pointer}
 #lb.on{display:flex}
@@ -129,14 +131,9 @@ const ITEMS = [
   {cat:"studies", title:"샘플 · 빛 아래 변하는 색", note:"사진 파일을 올리고 img에 파일 이름을 적으면 사진이 나와요.", img:"", color:"#b9a27a"},
   {cat:"self",    title:"샘플 · 밤나무 껍질 물감", note:"재료, 바인더, 만든 날짜를 짧게 적어보세요.", img:"", color:"#6b4f3a"},
   {cat:"self",    title:"샘플 · 쑥 물감", note:"", img:"", color:"#7d8b5a"},
-  {cat:"archive", title:"샘플 · 황토 p.1", note:"채집한 곳과 날짜, 처리 방법을 적어요.", img:"", color:"#b9823f"},
-  {cat:"archive", title:"샘플 · 감잎 p.2", note:"말린 뒤 곱게 갈아 만든 안료.", img:"", color:"#9c8f52"},
-  {cat:"archive", title:"샘플 · 쑥 p.3", note:"", img:"", color:"#7d8b5a"},
-  {cat:"archive", title:"샘플 · 밤껍질 p.4", note:"여러 번 우려낸 색의 기록.", img:"", color:"#6b4f3a"},
-  {cat:"archive", title:"샘플 · 홍화 p.5", note:"", img:"", color:"#c0674f"},
-  {cat:"archive", title:"샘플 · 쪽 p.6", note:"발효 기간에 따라 달라진 푸른빛.", img:"", color:"#4f6a86"},
-  {cat:"archive", title:"샘플 · 먹 p.7", note:"", img:"", color:"#3b3a38"},
-  {cat:"archive", title:"샘플 · 숯 p.8", note:"", img:"", color:"#55514a"},
+  {cat:"archive", title:"엉겁의 존재", meta:["Pigment Red 102", "I, ◩, granulation", "천연무기안료"],
+   note:"천연 산화철로 구성됨.\n이탈리아 베네토 지역의 적토를 건조, 정제 후 분쇄.\n구석기 시대부터 사용된 인류 최초의 안료.\n피렌체 초기 르네상스의 피부색 ‘cinabrese’를 만드는 데 사용됨.",
+   img:"PR102_venetian red.jpg", color:"#a8483a"},
   {cat:"use",     title:"샘플 · 숲 드로잉", note:"만든 물감으로 그린 작업.", img:"", color:"#a5ad92"}
 ];
 
@@ -144,11 +141,12 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 const pop = $("#pop");
+const metaHtml = it => it.meta ? `<div class="meta">${it.meta.map(esc).join("<br>")}</div>` : "";
 function swatch(it){
-  return `<div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${esc(it.img)}" alt="${esc(it.title)}" onerror="this.remove()">`:''}</div>`;
+  return `<div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${encodeURI(it.img)}" alt="${esc(it.title)}" onerror="this.remove()">`:''}</div>`;
 }
 function showPop(it, el){
-  pop.innerHTML = swatch(it) + `<h3>${esc(it.title)}</h3>${it.note?`<p>${esc(it.note)}</p>`:''}`;
+  pop.innerHTML = swatch(it) + `<h3>${esc(it.title)}</h3>${metaHtml(it)}${it.note?`<p>${esc(it.note)}</p>`:''}`;
   pop.classList.add("on");
   const r = el.getBoundingClientRect(), w = 300, h = pop.offsetHeight;
   let x = r.right + 16;
@@ -196,7 +194,7 @@ function render(){
   $("#main").innerHTML = `<h1>${esc(sec.name)}</h1><p class="intro">${esc(sec.intro)}</p>` +
     `<div class="grid">` + list.map((it, n) =>
       `<article class="item" tabindex="0" data-n="${n}">
-        <div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${esc(it.img)}" alt="${esc(it.title)}" loading="lazy">`:''}</div>
+        <div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${encodeURI(it.img)}" alt="${esc(it.title)}" loading="lazy">`:''}</div>
         <h2>${esc(it.title)}</h2>${it.note?`<p>${esc(it.note)}</p>`:''}
       </article>`).join("") + `</div>`;
 
@@ -210,9 +208,9 @@ function render(){
 
 function openLb(it){
   const media = it.img
-    ? `<img class="big" src="${esc(it.img)}" alt="${esc(it.title)}">`
+    ? `<img class="big" src="${encodeURI(it.img)}" alt="${esc(it.title)}">`
     : `<div class="big sw" style="--sw:${esc(it.color||'#d8d0bd')}"></div>`;
-  $("#lb").innerHTML = `<figure>${media}<h2>${esc(it.title)}</h2>${it.note?`<p>${esc(it.note)}</p>`:''}</figure>`;
+  $("#lb").innerHTML = `<figure>${media}<h2>${esc(it.title)}</h2>${metaHtml(it)}${it.note?`<p>${esc(it.note)}</p>`:''}</figure>`;
   $("#lb").classList.add("on");
 }
 $("#lb").addEventListener("click", () => $("#lb").classList.remove("on"));
