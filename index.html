@@ -43,6 +43,18 @@ h1{font-weight:300;font-size:30px;line-height:1.3;margin:0 0 10px}
 .about p{margin:0 0 1.2em}
 .about .contact{margin-top:2em;padding-top:1.2em;border-top:1px solid var(--line);font-size:15px;color:var(--muted)}
 .about a{border-bottom:1px solid var(--line)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start;margin-bottom:68px}
+.hero h2{font-size:22px;font-weight:300;margin:0 0 14px;line-height:1.4}
+.hero p{margin:0 0 1em;font-size:16px}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:16px}
+.page{cursor:pointer}
+.page .thumb{aspect-ratio:3/4}
+#pop{position:fixed;z-index:8;width:300px;background:#f2ecdf;padding:12px;box-shadow:0 18px 40px -14px rgba(40,32,18,.5);pointer-events:none;opacity:0;transform:scale(.97);transition:opacity .15s,transform .15s}
+#pop.on{opacity:1;transform:none}
+#pop .thumb{aspect-ratio:3/4;box-shadow:none}
+#pop h3{font-size:15px;font-weight:400;margin:10px 0 2px}
+#pop p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.6}
+@media(max-width:700px){.hero{grid-template-columns:1fr;gap:24px}}
 #lb{position:fixed;inset:0;background:rgba(236,230,216,.96);display:none;align-items:center;justify-content:center;padding:28px;z-index:9;cursor:pointer}
 #lb.on{display:flex}
 #lb figure{margin:0;max-width:760px;width:100%;text-align:left}
@@ -65,6 +77,7 @@ footer{margin-top:90px;font-size:13px;color:var(--muted)}
   <footer>© among.trees.art</footer>
 </div>
 <div id="lb" role="dialog" aria-label="확대 보기"></div>
+<div id="pop" aria-hidden="true"></div>
 
 <script>
 /* ============================================================
@@ -93,18 +106,52 @@ const ABOUT = {
   contactHtml:'Instagram <a href="https://instagram.com/among.trees.art" target="_blank" rel="noopener">@among.trees.art</a><br>Email 이메일 주소를 여기에 적어주세요'
 };
 
+/* Pigment Archive 첫 화면의 노트 소개 (사진 + 글) */
+const ARCHIVE_NOTE = {
+  title:"안료 아카이빙 노트",
+  img:"",            // 노트 사진 파일 이름 (예: "note-cover.jpg")
+  color:"#a89c80",
+  text:[
+    "샘플 글이에요. 이 노트를 어떻게 쓰기 시작했는지, 어떤 기준으로 안료를 기록하는지 적어주세요.",
+    "아래의 작은 사진들은 노트의 각 페이지예요. 위에 마우스를 올리면 크게 보이고 글이 함께 나와요."
+  ]
+};
+
+/* Pigment Archive의 cat:"archive" 항목은 노트의 '페이지'로 작게 나열돼요 */
 const ITEMS = [
   {cat:"studies", title:"샘플 · 초록의 단계", note:"샘플 항목이에요. 지우고 내 작업으로 바꿔주세요.", img:"", color:"#8a9a6e"},
   {cat:"studies", title:"샘플 · 빛 아래 변하는 색", note:"사진 파일을 올리고 img에 파일 이름을 적으면 사진이 나와요.", img:"", color:"#b9a27a"},
   {cat:"self",    title:"샘플 · 밤나무 껍질 물감", note:"재료, 바인더, 만든 날짜를 짧게 적어보세요.", img:"", color:"#6b4f3a"},
   {cat:"self",    title:"샘플 · 쑥 물감", note:"", img:"", color:"#7d8b5a"},
-  {cat:"archive", title:"샘플 · 황토", note:"채집한 곳과 날짜.", img:"", color:"#b9823f"},
-  {cat:"archive", title:"샘플 · 감잎", note:"", img:"", color:"#9c8f52"},
+  {cat:"archive", title:"샘플 · 황토 p.1", note:"채집한 곳과 날짜, 처리 방법을 적어요.", img:"", color:"#b9823f"},
+  {cat:"archive", title:"샘플 · 감잎 p.2", note:"말린 뒤 곱게 갈아 만든 안료.", img:"", color:"#9c8f52"},
+  {cat:"archive", title:"샘플 · 쑥 p.3", note:"", img:"", color:"#7d8b5a"},
+  {cat:"archive", title:"샘플 · 밤껍질 p.4", note:"여러 번 우려낸 색의 기록.", img:"", color:"#6b4f3a"},
+  {cat:"archive", title:"샘플 · 홍화 p.5", note:"", img:"", color:"#c0674f"},
+  {cat:"archive", title:"샘플 · 쪽 p.6", note:"발효 기간에 따라 달라진 푸른빛.", img:"", color:"#4f6a86"},
+  {cat:"archive", title:"샘플 · 먹 p.7", note:"", img:"", color:"#3b3a38"},
+  {cat:"archive", title:"샘플 · 숯 p.8", note:"", img:"", color:"#55514a"},
   {cat:"use",     title:"샘플 · 숲 드로잉", note:"만든 물감으로 그린 작업.", img:"", color:"#a5ad92"}
 ];
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+const pop = $("#pop");
+function swatch(it){
+  return `<div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${esc(it.img)}" alt="${esc(it.title)}">`:''}</div>`;
+}
+function showPop(it, el){
+  pop.innerHTML = swatch(it) + `<h3>${esc(it.title)}</h3>${it.note?`<p>${esc(it.note)}</p>`:''}`;
+  pop.classList.add("on");
+  const r = el.getBoundingClientRect(), w = 300, h = pop.offsetHeight;
+  let x = r.right + 16;
+  if(x + w > innerWidth - 12) x = r.left - w - 16;
+  if(x < 12) x = Math.max(12, Math.min(r.left, innerWidth - w - 12));
+  const y = Math.max(12, Math.min(r.top + r.height/2 - h/2, innerHeight - h - 12));
+  pop.style.left = x + "px"; pop.style.top = y + "px";
+}
+function hidePop(){ pop.classList.remove("on"); }
 
 function render(){
   const id = (location.hash || "#about").slice(1);
@@ -120,6 +167,26 @@ function render(){
     return;
   }
   const list = ITEMS.filter(i => i.cat === sec.id);
+
+  if(sec.id === "archive"){
+    $("#main").innerHTML = `<h1>${esc(sec.name)}</h1><p class="intro">${esc(sec.intro)}</p>
+      <section class="hero">${swatch(ARCHIVE_NOTE)}
+        <div><h2>${esc(ARCHIVE_NOTE.title)}</h2>${ARCHIVE_NOTE.text.map(t=>`<p>${esc(t)}</p>`).join("")}</div>
+      </section>
+      <div class="pages">` + list.map((it,n) =>
+        `<div class="page" tabindex="0" data-n="${n}" aria-label="${esc(it.title)}">${swatch(it)}</div>`).join("") + `</div>`;
+    document.querySelectorAll(".page").forEach(el => {
+      const it = list[el.dataset.n];
+      el.addEventListener("pointerenter", e => { if(e.pointerType === "mouse") showPop(it, el); });
+      el.addEventListener("pointerleave", hidePop);
+      el.addEventListener("focus", () => showPop(it, el));
+      el.addEventListener("blur", hidePop);
+      el.addEventListener("click", () => { hidePop(); openLb(it); });
+      el.addEventListener("keydown", e => { if(e.key === "Enter") { hidePop(); openLb(it); } });
+    });
+    window.scrollTo(0,0);
+    return;
+  }
   $("#main").innerHTML = `<h1>${esc(sec.name)}</h1><p class="intro">${esc(sec.intro)}</p>` +
     `<div class="grid">` + list.map((it, n) =>
       `<article class="item" tabindex="0" data-n="${n}">
