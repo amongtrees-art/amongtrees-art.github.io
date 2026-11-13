@@ -39,6 +39,11 @@ h1{font-weight:300;font-size:30px;line-height:1.3;margin:0 0 10px}
 .thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .item h2{font-size:17px;font-weight:400;margin:14px 0 2px}
 .item p{margin:0;font-size:14.5px;color:var(--muted);line-height:1.6}
+.masonry{display:block;columns:250px;column-gap:30px}
+.masonry .item{break-inside:avoid;margin-bottom:38px}
+.masonry .thumb{aspect-ratio:auto;height:auto}
+.masonry .thumb:empty{aspect-ratio:4/5}
+.masonry .thumb img{height:auto}
 .about{max-width:560px}
 .about p{margin:0 0 1.2em}
 .about .contact{margin-top:2em;padding-top:1.2em;border-top:1px solid var(--line);font-size:15px;color:var(--muted)}
@@ -230,7 +235,20 @@ const ITEMS = [
   {cat:"archive", title:"우면산 브라운", meta:["Natural Earth", "천연무기안료"],
    note:"서울 우면산에서 직접 채취한 흙으로 만든 자가 제작 안료.\n산에서 가장 붉은빛을 띠는 흙을 채취한 후 건조하고 소독, 체에 걸러 불순물을 제거하고 곱게 분쇄하여 안료로 만듦.\n채취 날짜: 2025년 7월 28일\n채취 위치: 북위 37.47240°, 동경 126.98660°",
    img:"N_Mt. Umyeon Brown.jpg", color:"#8a4a30"},
-  {cat:"use",     title:"샘플 · 숲 드로잉", note:"만든 물감으로 그린 작업.", img:"", color:"#a5ad92"}
+  {cat:"use", title:"Cairo", note:"", img:"1_Cairo.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Cairo", note:"", img:"2_Cairo.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Barcelona", note:"", img:"3_Barcelona.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Aswan", note:"", img:"4_Aswan.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Barcelona", note:"", img:"5_Barcelona.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Barcelona", note:"", img:"6_Barcelona.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Luxor", note:"", img:"7_Luxor.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Mallorca", note:"", img:"8_Mallorca.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Cordoba", note:"", img:"9_Cordoba.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Mallorca", note:"", img:"10_Mallorca.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Mallorca", note:"", img:"11_Mallorca.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Aswan", note:"", img:"12_Aswan.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Aswan", note:"", img:"13_Aswan.jpg", color:"#cfc7b4"},
+  {cat:"use", title:"Aswan", note:"", img:"14_Aswan.jpg", color:"#cfc7b4"}
 ];
 
 const $ = s => document.querySelector(s);
@@ -297,7 +315,7 @@ function render(){
     return;
   }
   $("#main").innerHTML = `<h1>${esc(sec.name)}</h1><p class="intro">${esc(sec.intro)}</p>` +
-    `<div class="grid">` + list.map((it, n) =>
+    `<div class="grid${sec.id==="use"?" masonry":""}">` + list.map((it, n) =>
       `<article class="item" tabindex="0" data-n="${n}">
         <div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${encodeURI(it.img)}" alt="${esc(it.title)}" loading="lazy">`:''}</div>
         <h2>${esc(it.title)}</h2>${it.note?`<p>${esc(it.note)}</p>`:''}
