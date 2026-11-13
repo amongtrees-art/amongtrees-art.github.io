@@ -43,12 +43,14 @@ h1{font-weight:300;font-size:30px;line-height:1.3;margin:0 0 10px}
 .about p{margin:0 0 1.2em}
 .about .contact{margin-top:2em;padding-top:1.2em;border-top:1px solid var(--line);font-size:15px;color:var(--muted)}
 .about a{border-bottom:1px solid var(--line)}
-.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:44px;align-items:start;margin-bottom:68px}
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:44px;align-items:start;margin-bottom:68px}
 .hero h2{font-size:22px;font-weight:300;margin:0 0 14px;line-height:1.4}
-.hero p{margin:0 0 1em;font-size:16px}
-.hero ul{margin:0 0 1.2em;padding-left:1.1em;font-size:13.5px}
+.hero p,.hero ul{font-size:14.5px}
+.hero p{margin:0 0 1em;white-space:pre-line}
+@media(min-width:701px){.hero p,.hero ul{font-size:min(14.5px,calc((100vw - 100px)*.0165))}.hero h2 + p{white-space:nowrap}}
+.hero ul{list-style:none;margin:0 0 1.2em;padding:0;color:var(--muted)}
 .hero li{margin:0 0 .2em}
-.hero .spec{color:var(--muted);font-size:14px;margin:0}
+.hero .spec{color:var(--muted);margin:0}
 .pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:16px}
 .page{cursor:pointer}
 .page .thumb{aspect-ratio:3/4}
@@ -124,8 +126,8 @@ const ARCHIVE_NOTE = {
   img:"pigment-archive-note.jpg",   // 노트 사진 파일 이름 (GitHub에 올린 이름과 같아야 해요)
   color:"#a89c80",
   text:[
-    "수집한 안료를 발색하고, 각 안료의 종류와 특성을 기록하는 아카이브 노트.",
-    "안료의 분류를 비롯해 내광성, 투명도, 성분 등의 정보를 정리한다. 각 안료에는 고유한 이름을 붙여 색을 기록한다.",
+    "수집한 안료를 발색하고, 각 안료의 종류와 특성을 기록한 아카이브 노트.",
+    "안료의 분류를 비롯해 내광성, 투명도, 성분 등의 정보를 정리한다.\n각 안료에는 고유한 이름을 붙여 색을 기록한다.",
     "MSDS(물질안전보건자료)를 참고하여 인체와 환경에 유해성이 낮은 안료를 중심으로 선정한다."
   ],
   list:["수제 재생종이", "재사용 황마 자루", "면사를 이용한 콥틱 바인딩"],
