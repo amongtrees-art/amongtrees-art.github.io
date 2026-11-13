@@ -52,17 +52,24 @@ h1{font-weight:300;font-size:30px;line-height:1.3;margin:0 0 10px}
 .pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:16px}
 .page{cursor:pointer}
 .page .thumb{aspect-ratio:3/4}
-#pop{position:fixed;z-index:8;width:300px;background:#f2ecdf;padding:12px;box-shadow:0 18px 40px -14px rgba(40,32,18,.5);pointer-events:none;opacity:0;transform:scale(.97);transition:opacity .15s,transform .15s}
+#pop{position:fixed;z-index:8;width:300px;max-height:calc(100vh - 24px);overflow:hidden;background:#f2ecdf;padding:12px;box-shadow:0 18px 40px -14px rgba(40,32,18,.5);pointer-events:none;opacity:0;transform:scale(.97);transition:opacity .15s,transform .15s}
 #pop.on{opacity:1;transform:none}
 #pop .thumb{aspect-ratio:3/4;box-shadow:none}
 #pop h3{font-size:15px;font-weight:400;margin:10px 0 2px}
 #pop p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.6}
 #pop p,#lb p{white-space:pre-line}
 .meta{margin:2px 0 8px;font-size:12.5px;line-height:1.6;color:var(--ink)}
+.legend{margin-top:80px;padding-top:28px;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:28px 36px}
+.legend h3{font-size:13px;font-weight:400;color:var(--ink);margin:0 0 8px;letter-spacing:.02em}
+.legend ul{list-style:none;margin:0;padding:0;font-size:13px;line-height:1.9;color:var(--muted)}
+.legend b{font-weight:400;color:var(--ink)}
+.sq{display:inline-block;width:.8em;height:.8em;border:1.5px solid currentColor;box-sizing:border-box;vertical-align:-.05em}
+.sq.f{background:currentColor}
+.sq.h{background:linear-gradient(135deg,currentColor 50%,transparent 50%)}
 @media(max-width:700px){.hero{grid-template-columns:1fr;gap:24px}}
 #lb{position:fixed;inset:0;background:rgba(236,230,216,.96);display:none;align-items:center;justify-content:center;padding:28px;z-index:9;cursor:pointer}
 #lb.on{display:flex}
-#lb figure{margin:0;max-width:760px;width:100%;text-align:left}
+#lb figure{margin:0;max-width:760px;width:100%;text-align:left;max-height:100%;overflow-y:auto}
 #lb .big{width:100%;max-height:68vh;aspect-ratio:4/5;background:var(--sw,#d8d0bd);margin:0 auto;display:block;object-fit:contain}
 #lb .big.sw{max-width:420px}
 #lb h2{font-size:20px;font-weight:400;margin:16px 0 4px}
@@ -138,11 +145,11 @@ const ITEMS = [
    note:"니켈과 안티몬 이온이 치환된 루틸형 이산화티타늄 결정으로 이루어진 복합 금속 산화물 안료.\n고온 소성을 통해 제조, 열과 빛에 대한 안정성이 뛰어남.\n밝고 부드러운 녹황색을 띰",
    img:"PY53_Nickel-TitaniumYellow.jpg", color:"#d9cf6a"},
   {cat:"archive", title:"오후에 비타민", meta:["Pigment Yellow 83", "I  ◩  staining", "합성유기안료"],
-   note:"두 개의 아조 결합을 포함하는 디아릴라이드 계열 안료.\n디아조화와 커플링 반응을 통해 합성, 물에 잘 녹이 않는 안정적 입자로 만들어짐.",
+   note:"두 개의 아조 결합을 포함하는 디아릴라이드 계열 안료.\n디아조화와 커플링 반응을 통해 합성, 물에 잘 녹지 않는 안정적 입자로 만들어짐.",
    img:"PY83_Diarylide Yellow.jpg", color:"#e8c93a"},
   {cat:"archive", title:"벨벳 하늘", meta:["Pigment Blue 71", "I  ◩  granulation", "합성무기안료"],
    note:"지르콘(ZrSiO₄) 결정 구조에 바나듐이 포함된 청색 안료.\n지르코늄 산화물, 실리카, 바나듐 산화물을 고온에서 소성.\n결정 구조가 매우 안정적.\n열, 빛, 화학적 환경에 대한 저항성이 높음.",
-   img:"PG71_Zirconium Cerulean Blue.jpg", color:"#7fa9b8"},
+   img:"PB71_Zirconium Cerulean Blue.jpg", color:"#7fa9b8"},
   {cat:"archive", title:"벨벳 산호", meta:["Pigment Red 232", "I  ◩  granulation", "합성무기안료"],
    note:"규산지르코늄 결정 안에 카드뮴 황화물 및 셀렌화물 계열 색소 성분을 포함시킨 안료.\n고온 소성을 통해 제조, 색소 성분을 안정적인 결정 구조에 가둬 내열성과 내화학성이 높음.\n고온에서도 색이 잘 유지되는 혁신적 세라믹 안료로 개발됨.",
    img:"PR232_Zirconium Pink.jpg", color:"#d98a7e"},
@@ -167,14 +174,77 @@ const ITEMS = [
   {cat:"archive", title:"빛을 위한 돌", meta:["Pigment White 6", "I  ■", "합성무기안료"],
    note:"이산화티타늄으로 이루어진 백색 안료.\n루틸 광석을 화학적으로 정제, 고온에서 결정화한 뒤 분쇄.\n높은 굴절률로 빛을 강하게 산란시켜 뛰어난 은폐력과 백색도를 가짐.",
    img:"PW6_Titanium White Rutile.jpg", color:"#f3f0e8"},
+  {cat:"archive", title:"금빛 사막", meta:["Pigment Yellow 43", "I  ◩  granulation", "천연무기안료"],
+   note:"프랑스산 천연 황토에서 얻은 산화철 계열 안료.\n주 발색 성분은 침철석.\n실리카와 알루미나를 포함한 점토 광물 등으로 구성됨.\n선사시대부터 사용된 인류 최초의 색채 재료 중 하나.",
+   img:"PY43_Yellow OChre.jpg", color:"#c99a3c"},
+  {cat:"archive", title:"아기 청개구리", meta:["Pigment Green 17", "I  ■", "합성무기안료"],
+   note:"주황색을 띠는 중크롬산염을 환원제와 함께 고온에서 반응시키면 녹색의 산화크롬이 형성됨.\n1809년 프랑스에서 개발, 뛰어난 내광성과 내열성, 화학적 안정성으로 건축용 도료와 산업용 안료로 사용됨.\n적외선을 흡수하는 특성으로 군용 위장 도료에도 활용됨.",
+   img:"PG17_Chrome Oxide Green.jpg", color:"#5b7a4a"},
+  {cat:"archive", title:"고려청자", meta:["Pigment Green 23", "I  □  granulation", "천연무기안료"],
+   note:"프랑스 코트다쥐르 지역에서 채굴되는 셀라도나이트 광물 안료.\n현무암 같은 화산암이 물과 열수의 작용으로 변질되는 과정에서 철, 마그네슘, 칼륨 등을 포함한 규산염 광물로 형성됨.\n르네상스 회화에서 인물의 피부색을 표현하기 위한 밑칠 기법인 베르다치오(Verdaccio)에 사용된 전통적 녹색 흙 안료.",
+   img:"PG23_Antique Green Earth_Celadonite.jpg", color:"#94a894"},
+  {cat:"archive", title:"불편한 균형", meta:["Pigment Green 50", "I  ■", "합성무기안료"],
+   note:"코발트와 티타늄 등의 금속 산화물을 고온에서 반응시켜 제조.\n금속 원소가 하나의 결정 구조 안에 결합된 복합 산화물 안료.\n높은 내광성과 내열성, 화학적 안정성을 지님.",
+   img:"PG50_Cobalt Green.jpg", color:"#4f9a7e"},
+  {cat:"archive", title:"공기 없는 숨", meta:["Pigment Green 26", "I  ■", "합성무기안료"],
+   note:"산화코발트와 산화크롬을 고온에서 반응시켜 제조.\n두 금속 원료가 결합해 스피넬(spinel)이라는 안정적 결정 구조를 형성.\n높은 내광성과 내열성, 화학적 안정성이 특징.",
+   img:"PG26_Cobalt Oxide Green Blue.jpg", color:"#3a8a8c"},
+  {cat:"archive", title:"버터 가득 크로와상", meta:["Pigment Yellow 43", "I  ◩  granulation", "천연무기안료"],
+   note:"프랑스산 천연 황갈색 산화철 안료.\n주요 발색 성분은 침철석. 망간 산화물과 점토, 실리카 등의 광분 성분이 포함됨.\n철과 망간의 함량 및 광물 조성에 따라 다양한 황갈색을 띰.\n[금빛 사막]보다 갈색과 붉은 기운이 강함.",
+   img:"PY43_Raw Sienna.jpg", color:"#b9873f"},
+  {cat:"archive", title:"잔열", meta:["Pigment Red 102", "I  ■  granulation", "천연무기안료"],
+   note:"프랑스산 천연 황토인 PY43을 고온에서 가열해 제조.\n가열 과정에서 황색 광물인 침철석의 수분이 빠져나가고, 적색의 적철석으로 변화함.",
+   img:"PR102_Burnt Sienna.jpg", color:"#8f4a2a"},
+  {cat:"archive", title:"피스타치오 크림", meta:["Pigment Green 51", "I  ◩  granulation", "합성무기안료"],
+   note:"칼슘 크롬 규산염 계열 안료.\n칼슘 산화물, 산화크롬, 이산화규소 등을 고온에서 소성하여 제조.\n산화크롬이 칼슘 규산염의 가넷형 구조에 포함된 상태.\n-산화크롬: 크롬을 함유한 산화물. 규산염과 결합하면서 특유의 녹색을 만듦.\n-규산염: 규소와 산소가 결합한 화합물. 칼슘과 함께 안정적인 결정 구조를 형성, 안료의 내구성과 화학적 안정성에 기여함.\n높은 내광성과 내열성을 지님.",
+   img:"PG51_Pastel Green.jpg", color:"#a9bf8e"},
+  {cat:"archive", title:"갓 구운 에그타르트", meta:["Pigment Yellow 227", "I  ■  staining", "합성무기안료"],
+   note:"니오븀과 주석을 중심으로 황과 아연 등이 포함된 복합 산화물 안료.\n2000년대에 개발되어 2012년 상용화된 차세대 황색 안료.\n기존 납 크로메이트 황색 안료를 대체하기 위해 개발되어 주로 산업용 플라스틱 분야에서 활용됨.\n높은 내광성과 은폐력을 지님.",
+   img:"PY27_NTP-Yellow.jpg", color:"#e7c443"},
+  {cat:"archive", title:"제주 귤밭", meta:["Pigment Yellow 216", "I  ■  staining", "합성무기안료"],
+   note:"티타늄, 주석, 아연으로 이루어진 복합 산화물 안료.\n티타늄이 결정의 기본 골격을 이루며 루틸(rutile)이라는 광물 같은 형태의 구조를 형성.\n주석과 아연은 티타늄 결정 구조에 포함되어 안료의 색상과 특성에 영향을 줌.\n1980년 개발된 고성을 무기안료.\n기존 무기안료보다 선명한 주황색을 구현, 높은 내구성까지 갖춰 플라스틱, 산업용 코팅, 자동차 도료 등에 활용됨.\n높은 은폐력과 내광성, 안정성이 우수함.",
+   img:"PY216_RTZ Orange.jpg", color:"#e08a2c"},
+  {cat:"archive", title:"곱게 익은 사과", meta:["Pigment Red 265", "I  ■  granulation"],
+   note:"세륨과 황으로 이루어진 황화물 계열 안료.\n세륨이 황과 결합하여 붉은색을 띠는 황화세륨(Cerium Sulfide) 결정을 형성.\n1990년대에 상용화된 카드뮴 레드 대체 안료.",
+   img:"PR265_Cerium Red.jpg", color:"#b3342e"},
+  {cat:"archive", title:"그늘진 추억", meta:["Pigment Brown 7", "I  ◩  granulation", "천연무기안료"],
+   note:"철과 망간 성분이 풍부한 이탈리아산 흙 안료.\n산화철과 수산화철이 황갈색을 만들고, 자연적으로 포함된 망간 산화물이 색을 더욱 어둡고 차분하게 만듦.\n고대부터 사용된 전통적 흙 안료.\n르네상스와 바로크 시대 회화에서 그림자와 깊은 음영을 표현하는 데 사용됨.\n유화에서는 망간 성분이 기름의 건조를 촉진함.",
+   img:"PBr7_Raw Umber.jpg", color:"#6b5238"},
+  {cat:"archive", title:"연기, 그늘", meta:["Pigment Green 23", "I  □", "천연무기안료"],
+   note:"키프로스 니코시아 지역에서 채취한 흙 안료.\n철, 마그네슘, 알루미늄, 칼륨 등이 포함된 함수 규산염 광물로 이루어짐.\n철을 포함한 광물의 성분과 구조에 의해 차분한 녹색을 띰.\n고대부터 회화에 사용된 전통적인 녹색 안료.",
+   img:"PG23_Nicosia Green.jpg", color:"#8c9a7a"},
+  {cat:"archive", title:"저녁 와인", meta:["Pigment Red 12", "II  ◩  staining", "합성유기안료"],
+   note:"아조 결합이라는 화학적 연결 구조를 통해 붉은색을 나타내는 유기 분자를 형성.\n염료와 달리 물에 잘 녹지 않는 고체 입자로 만들어져 안료로 사용.\n20세기 초 개발되어 인쇄 잉크, 페인트, 코팅 등에 널리 활용됨.",
+   img:"PR12_Bordeaux.jpg", color:"#6d1f2c"},
+  {cat:"archive", title:"푸른 퇴적물", meta:["Pigment Blue 31", "I  ◩  granulation", "합성무기안료"],
+   note:"석영(실리카), 구리 화합물, 석회 등을 고온에서 반응시켜 만든 칼슘 구리 규산염 안료.\n구리 성분이 포함된 결정 구조에서 특유의 선명한 청색이 나타남.\n고온에서 여러 원료를 소성해 푸른색의 결정 덩어리를 만들고, 이를 분쇄하여 안료로 사용.\n합성하여 만들어진 푸른 유기질 덩어리를 분쇄.\n기원전 3천년기부터 고대 이집트에서 사용된 인류 최초의 합성 안료 중 하나.\n입자가 매우 크고 무거워 물감으로 다루기 까다로움.",
+   img:"PB31_Egyptian Blue.jpg", color:"#3f6fb0"},
+  {cat:"archive", title:"나일강 침전물", meta:["Pigment Blue 31", "I  ◩  granulation", "합성무기안료"],
+   note:"석영(실리카), 구리 원료, 석회 등을 고온에서 가열해 만든 구리 규산염 유리 안료.\n구리 성분을 포함한 유리질 구조에서 녹색과 청록색이 나타남.\n고대 이집트에서 로마 후기까지 사용, 중세 이후 제조법이 단절되었다가 현대에 복원됨.",
+   img:"PB31_Egyptian Green.jpg", color:"#4f9a8a"},
+  {cat:"archive", title:"아스완 인디고", meta:["Natural Indigo", "천연유기염료"],
+   note:"이집트 아스완 시장에서 구입한 천연 인디고 분말.\n인디고 분말은 염료로, 물에 녹지 않아 안료처럼 사용 가능.\n인디고 잎을 물에 담가 발효하면 잎 속의 색소 전구체가 인독실(Indoxyl)로 변함. 이를 공기에 산화시키면 물에 녹지 않는 파란 침전물이 생성됨. 침전물을 모아 건조하고 분쇄하여 분말로 만듦.\n입자 크기와 응집 상태에 따라 색의 농도가 달라짐.\n미세한 입자는 비교적 밝은 청색을, 큰 입자는 깊고 짙은 남색을 띰.",
+   img:"N_Aswan Indigo.jpg", color:"#2a3b6b"},
+  {cat:"archive", title:"우면산 브라운", meta:["Natural Earth", "천연무기안료"],
+   note:"서울 우면산에서 직접 채취한 흙으로 만든 자가 제작 안료.\n산에서 가장 붉은빛을 띠는 흙을 채취한 후 건조하고 소독, 체에 걸러 불순물을 제거하고 곱게 분쇄하여 안료로 만듦.\n채취 날짜: 2025년 7월 28일\n채취 위치: 북위 37.47240°, 동경 126.98660°",
+   img:"N_Mt. Umyeon Brown.jpg", color:"#8a4a30"},
   {cat:"use",     title:"샘플 · 숲 드로잉", note:"만든 물감으로 그린 작업.", img:"", color:"#a5ad92"}
 ];
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+const LEGEND = [
+  {title:"Transparency | 투명도", rows:[["□ Transparent","투명"],["◩ Semi-transparent","반투명"],["■ Opaque","불투명"]]},
+  {title:"Lightfastness | 내광성", rows:[["I","매우 우수"],["II","우수"],["III","보통"]]},
+  {title:"Granulation | 그래뉼레이션", rows:[["Granulation","입자 침전 및 과립감"]]},
+  {title:"Staining | 착색성", rows:[["Staining","강한 착색, 제거 어려움"]]}
+];
+const sym = t => esc(t).replace(/□/g,'<span class="sq"></span>').replace(/◩/g,'<span class="sq h"></span>').replace(/■/g,'<span class="sq f"></span>');
+const legendHtml = () => `<section class="legend">` + LEGEND.map(g =>
+  `<div><h3>${esc(g.title)}</h3><ul>` + g.rows.map(r => `<li><b>${sym(r[0])}</b> — ${esc(r[1])}</li>`).join("") + `</ul></div>`).join("") + `</section>`;
 const pop = $("#pop");
-const metaHtml = it => it.meta ? `<div class="meta">${it.meta.map(esc).join("<br>")}</div>` : "";
+const metaHtml = it => it.meta ? `<div class="meta">${it.meta.map(sym).join("<br>")}</div>` : "";
 function swatch(it){
   return `<div class="thumb" style="--sw:${esc(it.color||'#d8d0bd')}">${it.img?`<img src="${encodeURI(it.img)}" alt="${esc(it.title)}" onerror="this.remove()">`:''}</div>`;
 }
@@ -211,7 +281,7 @@ function render(){
         <div><h2>${esc(ARCHIVE_NOTE.title)}</h2>${ARCHIVE_NOTE.text.map(t=>`<p>${esc(t)}</p>`).join("")}${ARCHIVE_NOTE.list?`<ul>${ARCHIVE_NOTE.list.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`:''}${ARCHIVE_NOTE.spec?`<p class="spec">${esc(ARCHIVE_NOTE.spec)}</p>`:''}</div>
       </section>
       <div class="pages">` + list.map((it,n) =>
-        `<div class="page" tabindex="0" data-n="${n}" aria-label="${esc(it.title)}">${swatch(it)}</div>`).join("") + `</div>`;
+        `<div class="page" tabindex="0" data-n="${n}" aria-label="${esc(it.title)}">${swatch(it)}</div>`).join("") + `</div>` + legendHtml();
     document.querySelectorAll(".page").forEach(el => {
       const it = list[el.dataset.n];
       el.addEventListener("pointerenter", e => { if(e.pointerType === "mouse") showPop(it, el); });
